@@ -11,8 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var userQuestion = '';
-  var userAnswer = '';
+  var mathExpression = '';
+  var numberToShow = '0';
 
   final List<String> buttons = [
     'C',
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   Color setButtonColor(String x) {
-    if (x == '%' || x == '/' || x == 'X' || x == '-' || x == '+' || x == '=') {
+    if (x == '/' || x == 'X' || x == '-' || x == '+' || x == '=') {
       return Colors.amber[700]!;
     }
     if (x == '%' || x == 'DEL' || x == 'C') {
@@ -55,14 +55,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void equalBtnPressed() {
-    String finalQuestion = userQuestion;
+    String finalQuestion = mathExpression;
     finalQuestion = finalQuestion.replaceAll('X', '*');
+    finalQuestion = finalQuestion.replaceAll('%', '/100');
     Parser p = Parser();
     Expression exp = p.parse(finalQuestion);
     ContextModel cm = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, cm);
 
-    userAnswer = eval.toString();
+    numberToShow = eval.toString();
   }
 
   @override
@@ -85,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(20),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        userQuestion,
+                        mathExpression,
                         style: const TextStyle(fontSize: 20),
                       ),
                     ),
@@ -93,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(20),
                       alignment: Alignment.centerRight,
                       child: Text(
-                        userAnswer,
+                        numberToShow,
                         style: const TextStyle(fontSize: 20),
                       ),
                     ),
@@ -105,7 +106,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               flex: 2,
               child: Container(
-                // padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 child: GridView.builder(
                   itemCount: buttons.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -120,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                         buttonText: buttons[index],
                         buttonTapped: () {
                           setState(() {
-                            userQuestion = '';
+                            mathExpression = '';
                           });
                         },
                       );
@@ -132,10 +133,10 @@ class _HomePageState extends State<HomePage> {
                         textColor: setButtonTextColor(buttons[index]),
                         buttonText: buttons[index],
                         buttonTapped: () {
-                          if (userQuestion.length > 0) {
+                          if (mathExpression.length > 0) {
                             setState(() {
-                              userQuestion = userQuestion.substring(
-                                  0, userQuestion.length - 1);
+                              mathExpression = mathExpression.substring(
+                                  0, mathExpression.length - 1);
                             });
                           }
                         },
@@ -159,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                       buttonText: buttons[index],
                       buttonTapped: () {
                         setState(() {
-                          userQuestion += buttons[index];
+                          mathExpression += buttons[index];
                         });
                       },
                     );
